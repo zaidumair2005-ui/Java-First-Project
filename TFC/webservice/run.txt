@@ -1,0 +1,19 @@
+HOW TO RUN THE SERVER
+=====================
+Prepare to run:
+
+Navigate to the right directory, in this case webservice is the right directory
+
+
+STEP 1: Build the project
+Windows: .\mvnw clean package
+
+STEP 2: Run the server
+java -jar target/spark-hello-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+STEP 3: Access the application
+Open your browser and go to: http://localhost:8080/login.html
+
+STEP 4: Stop the server
+Press Ctrl+C in the terminal, or run: taskkill /IM java.exe /F (in another terminal)
+
