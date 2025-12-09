@@ -1,7 +1,7 @@
-Windows: .\mvnw clean package
+Windows: & C:\Users\zaidu\OneDrive\Desktop\TFC\webservice\mvnw.cmd clean package
+
 Apple: bash mvnw clean package
 java -jar target/spark-hello-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 http://localhost:8080/login.html
-
 

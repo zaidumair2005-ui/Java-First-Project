@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thai Consonants - Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid #e5e7eb;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #3b82f6;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            margin-bottom: 10px;
+        }
+
+        .flashcard {
+            width: 450px;
+            height: 350px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .flashcard-front {
+            background: white;
+        }
+
+        .flashcard-back {
+            background: #1f2937;
+            transform: rotateY(180deg);
+            color: white;
+        }
+
+        .thai-character {
+            font-size: 100px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .flashcard-back .thai-character {
+            color: white;
+        }
+
+        .pronunciation {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .flashcard-back .pronunciation {
+            color: #9ca3af;
+        }
+
+        .meaning {
+            font-size: 16px;
+            color: #9ca3af;
+        }
+
+        .flashcard-back .meaning {
+            color: #d1d5db;
+        }
+
+        .class-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .flashcard-back .class-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: #d1d5db;
+        }
+
+        .tap-hint {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn.primary {
+            background: #1f2937;
+            color: white;
+            border-color: #1f2937;
+        }
+
+        .nav-btn.primary:hover:not(:disabled) {
+            background: #111827;
+        }
+
+        .card-counter {
+            font-size: 11px;
+            color: #6b7280;
+            padding: 5px 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .keyboard-hint {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #ef4444;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .difficulty-section {
+            margin-top: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .difficulty-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 6px 12px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .difficulty-btn.easy {
+            color: #10b981;
+            border-color: #d1fae5;
+        }
+
+        .difficulty-btn.easy:hover,
+        .difficulty-btn.easy.active {
+            background: #d1fae5;
+            border-color: #10b981;
+        }
+
+        .difficulty-btn.normal {
+            color: #f59e0b;
+            border-color: #fef3c7;
+        }
+
+        .difficulty-btn.normal:hover,
+        .difficulty-btn.normal.active {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+
+        .difficulty-btn.hard {
+            color: #ef4444;
+            border-color: #fee2e2;
+        }
+
+        .difficulty-btn.hard:hover,
+        .difficulty-btn.hard.active {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+
+        .filter-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 8px;
+            margin-top: 8px;
+        }
+
+        .filter-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 4px 8px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f9fafb;
+        }
+
+        .filter-btn.active {
+            background: #1f2937;
+            color: white;
+            border-color: #1f2937;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .audio-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #1f2937;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .audio-btn:hover {
+            background: #374151;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .audio-btn:active {
+            background: #111827;
+        }
+
+        .audio-btn svg {
+            pointer-events: none;
+        }
+
+        .difficulty-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .difficulty-badge.easy {
+            background: #d1fae5;
+            color: #10b981;
+        }
+
+        .difficulty-badge.normal {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .difficulty-badge.hard {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Thai Consonants</h1>
+                <div class="header-subtitle"><span id="totalCards">44</span> characters to master</div>
+            </div>
+            <div class="header-buttons">
+                <button class="icon-btn" onclick="shuffleCards()" title="Shuffle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 3 21 3 21 8"></polyline>
+                        <line x1="4" y1="20" x2="21" y2="3"></line>
+                        <polyline points="21 16 21 21 16 21"></polyline>
+                        <line x1="15" y1="15" x2="21" y2="21"></line>
+                        <line x1="4" y1="4" x2="9" y2="9"></line>
+                    </svg>
+                </button>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="progress-text"><span id="progressText">0 / 44</span></div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+
+        <div class="card-container">
+            <div class="flashcard" id="mainFlashcard" onclick="flipCard()">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="class-badge" id="classBadgeFront">MIDDLE</div>
+                        <div class="thai-character" id="cardFront">ก</div>
+                        <div class="tap-hint">TAP TO REVEAL</div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="class-badge" id="classBadgeBack">MIDDLE</div>
+                        <div class="thai-character" id="cardBack">ก</div>
+                        <div class="pronunciation" id="pronunciation">ko kai</div>
+                        <div class="meaning" id="meaning">(chicken)</div>
+                        <button class="audio-btn" onclick="event.stopPropagation(); playAudio();" title="Play audio">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" onclick="previousCard()" id="prevBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Previous
+            </button>
+            <div class="card-counter" id="cardCounter">1 / 44</div>
+            <button class="nav-btn primary" onclick="nextCard()" id="nextBtn">
+                Next
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+
+        <div class="keyboard-hint">← → to navigate</div>
+
+        <div class="difficulty-section">
+            <div class="difficulty-title">How difficult was this card?</div>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn easy" onclick="markDifficulty('easy')">
+                    ✓ Easy
+                </button>
+                <button class="difficulty-btn normal" onclick="markDifficulty('normal')">
+                    ~ Normal
+                </button>
+                <button class="difficulty-btn hard" onclick="markDifficulty('hard')">
+                    ✗ Hard
+                </button>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-title">Review by difficulty:</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByDifficulty('all')">All (<span
+                            id="countAll">0</span>)</button>
+                    <button class="filter-btn" onclick="filterByDifficulty('easy')">Easy (<span
+                            id="countEasy">0</span>)</button>
+                    <button class="filter-btn" onclick="filterByDifficulty('normal')">Normal (<span
+                            id="countNormal">0</span>)</button>
+                    <button class="filter-btn" onclick="filterByDifficulty('hard')">Hard (<span
+                            id="countHard">0</span>)</button>
+                    <button class="filter-btn" onclick="filterByDifficulty('unrated')">Unrated (<span
+                            id="countUnrated">0</span>)</button>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-value" id="statEasy">0</div>
+                    <div class="stat-label">Easy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statNormal">0</div>
+                    <div class="stat-label">Normal</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statHard">0</div>
+                    <div class="stat-label">Hard</div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let flashcards = [];
+            let allFlashcards = [];
+            let currentIndex = 0;
+            let learnedCount = 0;
+            let currentFilter = 'all';
+
+            // Load username and check authentication
+            const username = localStorage.getItem('username');
+            if (!username) {
+                window.location.replace('login.html');
+            }
+            // Load flashcards on page load
+            async function loadFlashcards() {
+                try {
+                    const response = await fetch('/flashcards');
+                    const data = await response.json();
+                    console.log('Loaded flashcards:', data.length);
+
+                    allFlashcards = data.map(card => ({
+                        front: card.front,
+                        back: card.back,
+                        pronunciation: card.pronunciation || '',
+                        meaning: card.meaning || '',
+                        class: card.class || 'MIDDLE',
+                        learned: card.learned || false,
+                        difficulty: card.difficulty || null
+                    }));
+                    flashcards = [...allFlashcards];
+                    currentIndex = 0;
+                    renderFlashcard();
+                    updateProgress();
+                    updateDifficultyStats();
+                } catch (error) {
+                    console.error('Error loading flashcards:', error);
+                }
+            }
+
+            function renderFlashcard() {
+                if (flashcards.length === 0) return;
+
+                const card = flashcards[currentIndex];
+                const mainCard = document.getElementById('mainFlashcard');
+
+                // Remove flipped state when changing cards
+                mainCard.classList.remove('flipped');
+
+                // Update content
+                document.getElementById('cardFront').textContent = card.front;
+                document.getElementById('cardBack').textContent = card.front;
+                document.getElementById('pronunciation').textContent = card.pronunciation;
+                document.getElementById('meaning').textContent = card.meaning;
+
+                // Update class badges
+                const className = card.class ? card.class.toUpperCase() : 'MIDDLE';
+                document.getElementById('classBadgeFront').textContent = className;
+                document.getElementById('classBadgeBack').textContent = className;
+
+                updateDifficultyButtons(card.difficulty);
+            }
+
+            function playAudio() {
+                if (flashcards.length === 0) return;
+
+                const card = flashcards[currentIndex];
+                const audioFile = `audio/${card.front}.mp3`;
+
+                const audio = new Audio(audioFile);
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                    // Fallback: use Web Speech API if audio file doesn't exist
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(card.pronunciation);
+                        utterance.lang = 'th-TH'; // Thai language
+                        utterance.rate = 0.8; // Slower speed for learning
+                        speechSynthesis.speak(utterance);
+                    }
+                });
+            }
+
+            function updateDifficultyButtons(difficulty) {
+                document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+                if (difficulty) {
+                    const activeBtn = document.querySelector(`.difficulty-btn.${difficulty}`);
+                    if (activeBtn) activeBtn.classList.add('active');
+                }
+            }
+
+            function markDifficulty(difficulty) {
+                if (flashcards.length === 0) return;
+
+                flashcards[currentIndex].difficulty = difficulty;
+
+                // Update in allFlashcards as well
+                const cardId = flashcards[currentIndex].front;
+                const allCard = allFlashcards.find(c => c.front === cardId);
+                if (allCard) allCard.difficulty = difficulty;
+
+                updateDifficultyButtons(difficulty);
+                updateDifficultyStats();
+
+                // Auto advance to next card
+                setTimeout(() => {
+                    if (currentIndex < flashcards.length - 1) {
+                        nextCard();
+                    }
+                }, 300);
+            }
+
+            function filterByDifficulty(filter) {
+                currentFilter = filter;
+                // Update active filter button
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+
+                // Filter cards
+                if (filter === 'all') {
+                    flashcards = [...allFlashcards];
+                } else if (filter === 'unrated') {
+                    flashcards = allFlashcards.filter(c => !c.difficulty);
+                } else {
+                    flashcards = allFlashcards.filter(c => c.difficulty === filter);
+                }
+
+                currentIndex = 0;
+                if (flashcards.length > 0) {
+                    renderFlashcard();
+                    updateProgress();
+                }
+            }
+
+            function updateDifficultyStats() {
+                const easy = allFlashcards.filter(c => c.difficulty === 'easy').length;
+                const normal = allFlashcards.filter(c => c.difficulty === 'normal').length;
+                const hard = allFlashcards.filter(c => c.difficulty === 'hard').length;
+                const unrated = allFlashcards.filter(c => !c.difficulty).length;
+
+                document.getElementById('statEasy').textContent = easy;
+                document.getElementById('statNormal').textContent = normal;
+                document.getElementById('statHard').textContent = hard;
+
+                document.getElementById('countAll').textContent = allFlashcards.length;
+                document.getElementById('countEasy').textContent = easy;
+                document.getElementById('countNormal').textContent = normal;
+                document.getElementById('countHard').textContent = hard;
+                document.getElementById('countUnrated').textContent = unrated;
+            }
+
+            function flipCard() {
+                document.getElementById('mainFlashcard').classList.toggle('flipped');
+            }
+
+            function nextCard() {
+                if (flashcards.length === 0) return;
+
+                if (currentIndex < flashcards.length - 1) {
+                    currentIndex++;
+                } else {
+                    currentIndex = 0; // Loop back to first card
+                }
+                renderFlashcard();
+                updateProgress();
+            }
+
+            function previousCard() {
+                if (flashcards.length === 0) return;
+
+                if (currentIndex > 0) {
+                    currentIndex--;
+                } else {
+                    currentIndex = flashcards.length - 1; // Loop to last card
+                }
+                renderFlashcard();
+                updateProgress();
+            }
+
+            function shuffleCards() {
+                for (let i = flashcards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+                }
+                currentIndex = 0;
+                renderFlashcard();
+                updateProgress();
+            }
+
+            function updateProgress() {
+                const total = flashcards.length;
+                const current = currentIndex + 1;
+                const percentage = total > 0 ? (current / total) * 100 : 0;
+
+                document.getElementById('progressText').textContent = `${current} / ${total}`;
+                document.getElementById('cardCounter').textContent = `${current} / ${total}`;
+                document.getElementById('progressBar').style.width = percentage + '%';
+                document.getElementById('totalCards').textContent = total;
+            }
+
+            function logout() {
+                localStorage.removeItem('username');
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            }
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    nextCard();
+                } else if (e.key === 'ArrowLeft') {
+                    previousCard();
+                } else if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    flipCard();
+                }
+            });
+
+            // Load flashcards when page loads
+            loadFlashcards();
+        </script>
+</body>
+
+</html>
